@@ -1,0 +1,68 @@
+TOTAL SLIDES: 22
+
+=== SLIDE 1 ===
+XỬ LÝ DỮ LIỆU LỚN TRÊN APACHE SPARK 		GV: Ngô Dương Hà 		Mail:  hand@huit.edu.vn
+
+=== SLIDE 2 ===
+CONTENT BM KHDL Trang  2 1.  MapReduce 2. Apache Spark 3. RDD 4.  DataFrame 5. Spark Streaming
+
+=== SLIDE 3 ===
+MapReduce Model BM KHDL Trang  3 MapReduce is a distributed programming model used to process large datasets across multiple computers in a cluster. Main idea: Map: Processes input data and generates key–value pairs. Shuffle: Groups the data based on the key. Reduce: Aggregates or summarizes the results.
+
+=== SLIDE 4 ===
+MapReduce Model BM KHDL Trang  4 Problem : Calculating total revenue by product Assume each record has the following format: Order_ID ,  Product_Name , Quantity,  Unit_Price Example: 	001, Laptop, 2, 1500 	002, Mouse, 3, 20 	003, Laptop, 1, 1500
+
+=== SLIDE 5 ===
+MapReduce Model BM KHDL Trang  5 Map Output : The Map phase reads each record, calculates the revenue for that product (Quantity ×  Unit_Price ): (Laptop, 3000) (Mouse, 60) (Laptop, 1500) Shuffle Phase : The Shuffle phase groups all values that share the same key: Laptop → [3000, 1500] Mouse → [60] Reduce Phase : The Reduce phase aggregates the values for each key by summing them to obtain the total revenue per product: (Laptop, 4500) (Mouse, 60)
+
+=== SLIDE 6 ===
+MapReduce Model BM KHDL Trang  6 Problem : Joining data from two tables Users Table 1, An 2,  Binh Orders Table 101, 1, Laptop 102, 2, Mouse 103, 1, Keyboard
+
+=== SLIDE 7 ===
+MapReduce Model BM KHDL Trang  7 Map Processing : Map for the Users table (1,  USER:An ) (2,  USER:Binh ) Map for the Orders table (1,  ORDER:Laptop ) (2,  ORDER:Mouse ) (1,  ORDER:Keyboard ) Shuffle Phase : 1 → [ USER:An ,  ORDER:Laptop ,  ORDER:Keyboard ] 2 → [ USER:Binh ,  ORDER:Mouse ] Reduce Phase :  An → Laptop An → Keyboard Binh  → Mouse
+
+=== SLIDE 8 ===
+MapReduce Model BM KHDL Trang  8 MapReduce is effective for large-scale, parallel data processing tasks such as: 1. Data Aggregation Counting occurrences (Word Count) Calculating totals, averages, or statistics Log analysis
+
+=== SLIDE 9 ===
+MapReduce Model BM KHDL Trang  9 2. Data Transformation Converting raw data into structured formats ETL pipelines (Extract – Transform – Load) Example : Normalizing Website Access Log Data Problem: A website system stores access logs in raw format as follows: 2026/03/15 10:20:01, user123, login, 192.168.1.5 2026/03/15 10:21:10, user456, logout, 192.168.1.8 2026/03/15 10:22:30, user123,  upload_file , 192.168.1.5  Map phase (user123, 2026-03-15 login) (user456, 2026-03-15 logout) (user123, 2026-03-15  upload_file )  Shuffle phase user123 → [2026-03-15 login, 2026-03-15  upload_file ] user456 → [2026-03-15 logout]  Reduce phase user123 → 2026-03-15 login user123 → 2026-03-15  upload_file user456 → 2026-03-15 logout
+
+=== SLIDE 10 ===
+MapReduce Model BM KHDL Trang  10 3. Search and Indexing Building inverted indexes for search engines Document indexing for large datasets Example : Building an inverted index for documents Problem: Assume there are several text documents in a system. doc1: Hadoop supports big data doc2: Big data processing with Hadoop - The goal is to build an inverted index to determine which documents contain each word. - This allows the search system to quickly retrieve relevant documents when a user enters a keyword.
+
+=== SLIDE 11 ===
+MapReduce Model BM KHDL Trang  11 4. Data Filtering Extracting specific records from large datasets Detecting errors or anomalies in system logs 5. Data Joining and Integration Joining large tables (users, transactions, logs) Integrating datasets from multiple sources
+
+=== SLIDE 12 ===
+MapReduce Model BM KHDL Trang  12 6. Graph and Network Analysis PageRank computation Social network analysis Link analysis in web graphs Example 1 :  Pagerank  computation for web pages Assume there are three web pages with the following links: A → B, C  B → C  C  → A Each page initially has a PageRank value, for example: A = 1.0  B = 1.0  C = 1.0
+
+=== SLIDE 13 ===
+MapReduce Model BM KHDL Trang  13 Map phase Page A: (B, 0.5), (C, 0.5) Page B: (C, 1.0) Page C: (A, 1.0) Shuffle phase A → [1.0]  B → [0.5]  C → [0.5, 1.0] Reduce phase A → 1.0 B → 0.5 C → 1.5
+
+=== SLIDE 14 ===
+MapReduce Model BM KHDL Trang  14 Example 2 :  Pagerank  computation for web pages Assume there are three web pages with the following links: Node 1: A → B, C  Node 2: B → C, C → A Each page initially has a PageRank value, for example: A = 1.0  B = 1.0  C = 1.0
+
+=== SLIDE 15 ===
+MapReduce Model BM KHDL Trang  15 7. Machine Learning Preprocessing Feature extraction Data preparation for large-scale machine learning Example : Feature extraction from user behavior logs Assume we have user behavior data as follows: user1,  view_product user1,  add_to_cart user1, purchase user2,  view_product user2,  view_product user3,  view_product user3,  add_to_cart Reduce phase user1 → (view=1, cart=1, purchase=1) user2 → (view=2, cart=0, purchase=0) user3 → (view=1, cart=1, purchase=0)
+
+=== SLIDE 16 ===
+MapReduce Model BM KHDL Trang  16 Example 1 : Training a linear regression model with  mapreduce . Use MapReduce to train a Linear Regression model to find a function that predicts house price based on land area. Training data distributed across nodes: Node 1: (50, 100), (60, 120) Node 2: (80, 160), (100, 200) Initial parameters: w=1, b=0,  α=0.000001 Linear Regression model: y= wx+b Loss function: Gradients:
+
+=== SLIDE 17 ===
+MapReduce Model BM KHDL Trang  17 Map Phase: Node 1: Point 1 (50, 100) y_pred =50 error = 100-50 = 50 gw1 = -2*50*50 = -5000 gb1 = -2*50 = -100 Point 2 (60, 120) y_pred =60 error = 60 gw2 = -2*60*60 = -7200 gb2 = -120 ( gradient_w , -12200) ( gradient_b , -220) (error = 110)
+
+=== SLIDE 18 ===
+MapReduce Model BM KHDL Trang  18 Node 2: ( gradient_w , -32800) ( gradient_b , -360) (error = 180) Shuffle phase: gradient_w  → [-12200, -32800] gradient_b  → [-220, -360] Reduce phase: g_total_w  = -45000 g_total_b  = -580 error = 290 Model Update (Iteration 1): w = 1 - α*(-45000) = 1.045 b = 0 - α*(-580) = 0.00058 MapReduce repeats this process for multiple iterations until the model converges: error < threshold
+
+=== SLIDE 19 ===
+MapReduce Model BM KHDL Trang  19 Example 2 : Training a linear regression model with  mapreduce . Use MapReduce to train a Linear Regression model to find a function that predicts house price based on land area. Training data distributed across nodes: Node 1: (40, 95), (55, 115) Node 2: (70, 150), (90, 180) Node 3: (110, 210), (130, 250) Initial parameters: w=0.8, b=5,  α=0.000001 Linear Regression model: y= wx+b Loss function: 					Gradients:
+
+=== SLIDE 20 ===
+MapReduce Model BM KHDL Trang  20 Limitations of MapReduce Slow processing due to frequent disk read/write operations. Limited support for interactive processing. Not optimized for machine learning. Not suitable for streaming data processing. → Apache Spark was developed to address these limitations.
+
+=== SLIDE 21 ===
+Apache Spark BM KHDL Trang  21 Apache Spark is a fast and distributed big data processing framework. Key features: In-memory computing Faster than Hadoop MapReduce Supports multiple APIs Supported languages: Python, Scala, Java, R
+
+=== SLIDE 22 ===
+Apache Spark BM KHDL Trang  22 Module Description Spark SQL Processing and analyzing structured data MLlib Machine learning algorithms GraphX Graph processing and graph analytics Spark Streaming Spark Core Real-time data stream processing Data processing Spark Ecosystem :
+

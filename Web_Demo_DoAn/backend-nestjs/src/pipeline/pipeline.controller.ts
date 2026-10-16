@@ -1,0 +1,22 @@
+import { Controller, Get } from '@nestjs/common';
+import { PipelineService } from './pipeline.service';
+
+@Controller('api/pipeline')
+export class PipelineController {
+  constructor(private readonly pipelineService: PipelineService) {}
+
+  @Get('status')
+  getStatus() {
+    return this.pipelineService.getStatus();
+  }
+
+  @Get('benchmark')
+  getBenchmark() {
+    return this.pipelineService.getBenchmark();
+  }
+
+  @Get('airflow-dag')
+  getAirflowDag() {
+    return this.pipelineService.getAirflowDag();
+  }
+}
