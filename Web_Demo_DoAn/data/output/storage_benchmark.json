@@ -1,0 +1,12 @@
+{
+  "format_raw": "CSV",
+  "format_optimized": "Snappy Parquet",
+  "raw_size_kb": 222.63,
+  "parquet_size_kb": 76.37,
+  "space_saved_percent": 65.7,
+  "columns_count": 37,
+  "rows_count": 1470,
+  "processing_time_sec": 0.271,
+  "compression_codec": "snappy",
+  "engine": "pyarrow"
+}

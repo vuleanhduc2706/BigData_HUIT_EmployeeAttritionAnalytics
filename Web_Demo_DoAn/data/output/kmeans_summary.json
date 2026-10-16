@@ -1,0 +1,38 @@
+[
+  {
+    "cluster_id": 0,
+    "name": "Nhóm 0: Cốt Cán & Thu Nhập Cao (Low Risk)",
+    "count": 425,
+    "percentage": 28.9,
+    "avg_monthly_income": 3508.0,
+    "avg_age": 28.7,
+    "attrition_rate": 24.47
+  },
+  {
+    "cluster_id": 1,
+    "name": "Nhóm 1: Nguy Cơ Báo Động - Lương Thấp (High Risk)",
+    "count": 216,
+    "percentage": 14.7,
+    "avg_monthly_income": 15492.0,
+    "avg_age": 47.9,
+    "attrition_rate": 6.48
+  },
+  {
+    "cluster_id": 2,
+    "name": "Nhóm 2: Tài Năng Trẻ & Mới Gia Nhập (Medium Risk)",
+    "count": 335,
+    "percentage": 22.8,
+    "avg_monthly_income": 5006.0,
+    "avg_age": 36.0,
+    "attrition_rate": 19.4
+  },
+  {
+    "cluster_id": 3,
+    "name": "Nhóm 3: Thâm Niên Ổn Định & Chờ Thăng Tiến (Low-Medium)",
+    "count": 494,
+    "percentage": 33.6,
+    "avg_monthly_income": 6165.0,
+    "avg_age": 39.8,
+    "attrition_rate": 10.93
+  }
+]

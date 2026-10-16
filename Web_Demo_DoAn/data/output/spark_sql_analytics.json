@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "title": "Spark SQL Multi-dimensional HR Attrition Analytics",
+    "total_records": 1470,
+    "generated_at": "2026-10-15 13:48:57",
+    "engine": "Apache Spark SQL / In-Memory SQL Query Engine"
+  },
+  "kpis": {
+    "total_employees": 1470,
+    "total_attrition": 237,
+    "attrition_rate_percent": 16.12,
+    "avg_monthly_income_usd": 6502.93,
+    "avg_age": 36.9,
+    "avg_years_at_company": 7.0
+  },
+  "queries": {
+    "query_1": {
+      "title": "1. TỶ LỆ NGHỈ VIỆC THEO CHẾ ĐỘ LÀM THÊM GIỜ (OVERTIME)",
+      "sql": "SELECT \n        CASE OverTime \n            WHEN 'Yes' THEN 'Có làm thêm giờ (OverTime = Yes)'\n            ELSE 'Không làm thêm giờ (No OverTime)'\n        END AS OverTime_Status,\n        COUNT(*) AS Total_Employees,\n        SUM(Attrition_Label) AS Resigned_Count,\n        COUNT(*) - SUM(Attrition_Label) AS Retained_Count,\n        ROUND(AVG(Attrition_Label) * 100, 2) AS Attrition_Rate_Percent\n    FROM hr_employee_data\n    GROUP BY OverTime\n    ORDER BY AVG(Attrition_Label) DESC",
+      "execution_ms": 0.0,
+      "data": [
+        {
+          "OverTime_Status": "Có làm thêm giờ (OverTime = Yes)",
+          "Total_Employees": 416,
+          "Resigned_Count": 127,
+          "Retained_Count": 289,
+          "Attrition_Rate_Percent": 30.53
+        },
+        {
+          "OverTime_Status": "Không làm thêm giờ (No OverTime)",
+          "Total_Employees": 1054,
+          "Resigned_Count": 110,
+          "Retained_Count": 944,
+          "Attrition_Rate_Percent": 10.44
+        }
+      ]
+    },
+    "query_2": {
+      "title": "2. MỨC LƯƠNG & TỶ LỆ NGHỈ VIỆC THEO PHÒNG BAN (DEPARTMENT)",
+      "sql": "SELECT \n        Department,\n        COUNT(*) AS Total_Employees,\n        SUM(Attrition_Label) AS Resigned_Count,\n        ROUND(AVG(MonthlyIncome), 0) AS Avg_Monthly_Income_USD,\n        ROUND(AVG(Attrition_Label) * 100, 2) AS Attrition_Rate_Percent\n    FROM hr_employee_data\n    GROUP BY Department\n    ORDER BY AVG(Attrition_Label) DESC",
+      "execution_ms": 0.0,
+      "data": [
+        {
+          "Department": "Sales",
+          "Total_Employees": 446,
+          "Resigned_Count": 92,
+          "Avg_Monthly_Income_USD": 6959.0,
+          "Attrition_Rate_Percent": 20.63
+        },
+        {
+          "Department": "Human Resources",
+          "Total_Employees": 63,
+          "Resigned_Count": 12,
+          "Avg_Monthly_Income_USD": 6655.0,
+          "Attrition_Rate_Percent": 19.05
+        },
+        {
+          "Department": "Research & Development",
+          "Total_Employees": 961,
+          "Resigned_Count": 133,
+          "Avg_Monthly_Income_USD": 6281.0,
+          "Attrition_Rate_Percent": 13.84
+        }
+      ]
+    },
+    "query_3": {
+      "title": "3. TOP 5 CHỨC DANH CÔNG VIỆC CÓ TỶ LỆ NGHỈ VIỆC CAO NHẤT",
+      "sql": "SELECT \n        JobRole,\n        COUNT(*) AS Total_Employees,\n        SUM(Attrition_Label) AS Resigned_Count,\n        ROUND(AVG(MonthlyIncome), 0) AS Avg_Monthly_Income_USD,\n        ROUND(AVG(Attrition_Label) * 100, 2) AS Attrition_Rate_Percent\n    FROM hr_employee_data\n    GROUP BY JobRole\n    ORDER BY AVG(Attrition_Label) DESC\n    LIMIT 5",
+      "execution_ms": 12.01,
+      "data": [
+        {
+          "JobRole": "Sales Representative",
+          "Total_Employees": 83,
+          "Resigned_Count": 33,
+          "Avg_Monthly_Income_USD": 2626.0,
+          "Attrition_Rate_Percent": 39.76
+        },
+        {
+          "JobRole": "Laboratory Technician",
+          "Total_Employees": 259,
+          "Resigned_Count": 62,
+          "Avg_Monthly_Income_USD": 3237.0,
+          "Attrition_Rate_Percent": 23.94
+        },
+        {
+          "JobRole": "Human Resources",
+          "Total_Employees": 52,
+          "Resigned_Count": 12,
+          "Avg_Monthly_Income_USD": 4236.0,
+          "Attrition_Rate_Percent": 23.08
+        },
+        {
+          "JobRole": "Sales Executive",
+          "Total_Employees": 326,
+          "Resigned_Count": 57,
+          "Avg_Monthly_Income_USD": 6924.0,
+          "Attrition_Rate_Percent": 17.48
+        },
+        {
+          "JobRole": "Research Scientist",
+          "Total_Employees": 292,
+          "Resigned_Count": 47,
+          "Avg_Monthly_Income_USD": 3240.0,
+          "Attrition_Rate_Percent": 16.1
+        }
+      ]
+    },
+    "query_4": {
+      "title": "4. TÁC ĐỘNG CỦA CÂN BẰNG CUỘC SỐNG (WORKLIFEBALANCE)",
+      "sql": "SELECT \n        CASE WorkLifeBalance\n            WHEN 1 THEN '1 - Rất kém (Bad)'\n            WHEN 2 THEN '2 - Tạm được (Good)'\n            WHEN 3 THEN '3 - Tốt (Better)'\n            WHEN 4 THEN '4 - Rất tốt (Best)'\n        END AS WorkLifeBalance_Level,\n        COUNT(*) AS Total_Employees,\n        SUM(Attrition_Label) AS Resigned_Count,\n        ROUND(AVG(Attrition_Label) * 100, 2) AS Attrition_Rate_Percent\n    FROM hr_employee_data\n    GROUP BY WorkLifeBalance\n    ORDER BY WorkLifeBalance ASC",
+      "execution_ms": 1.91,
+      "data": [
+        {
+          "WorkLifeBalance_Level": "1 - Rất kém (Bad)",
+          "Total_Employees": 80,
+          "Resigned_Count": 25,
+          "Attrition_Rate_Percent": 31.25
+        },
+        {
+          "WorkLifeBalance_Level": "2 - Tạm được (Good)",
+          "Total_Employees": 344,
+          "Resigned_Count": 58,
+          "Attrition_Rate_Percent": 16.86
+        },
+        {
+          "WorkLifeBalance_Level": "3 - Tốt (Better)",
+          "Total_Employees": 893,
+          "Resigned_Count": 127,
+          "Attrition_Rate_Percent": 14.22
+        },
+        {
+          "WorkLifeBalance_Level": "4 - Rất tốt (Best)",
+          "Total_Employees": 153,
+          "Resigned_Count": 27,
+          "Attrition_Rate_Percent": 17.65
+        }
+      ]
+    },
+    "query_5": {
+      "title": "5. MỐI QUAN HỆ THÂM NIÊN TẠI CÔNG TY VÀ TỶ LỆ NGHỈ VIỆC",
+      "sql": "SELECT \n        CASE \n            WHEN YearsAtCompany < 2 THEN 'Dưới 2 năm (Mới gia nhập)'\n            WHEN YearsAtCompany BETWEEN 2 AND 5 THEN '2 - 5 năm (Ổn định)'\n            WHEN YearsAtCompany BETWEEN 6 AND 10 THEN '6 - 10 năm (Kinh nghiệm)'\n            ELSE 'Trên 10 năm (Thâm niên cao)'\n        END AS Tenure_Group,\n        COUNT(*) AS Total_Employees,\n        SUM(Attrition_Label) AS Resigned_Count,\n        ROUND(AVG(MonthlyIncome), 0) AS Avg_Monthly_Income_USD,\n        ROUND(AVG(Attrition_Label) * 100, 2) AS Attrition_Rate_Percent\n    FROM hr_employee_data\n    GROUP BY \n        CASE \n            WHEN YearsAtCompany < 2 THEN 'Dưới 2 năm (Mới gia nhập)'\n            WHEN YearsAtCompany BETWEEN 2 AND 5 THEN '2 - 5 năm (Ổn định)'\n            WHEN YearsAtCompany BETWEEN 6 AND 10 THEN '6 - 10 năm (Kinh nghiệm)'\n            ELSE 'Trên 10 năm (Thâm niên cao)'\n        END\n    ORDER BY AVG(Attrition_Label) DESC",
+      "execution_ms": 0.0,
+      "data": [
+        {
+          "Tenure_Group": "Dưới 2 năm (Mới gia nhập)",
+          "Total_Employees": 215,
+          "Resigned_Count": 75,
+          "Avg_Monthly_Income_USD": 4565.0,
+          "Attrition_Rate_Percent": 34.88
+        },
+        {
+          "Tenure_Group": "2 - 5 năm (Ổn định)",
+          "Total_Employees": 561,
+          "Resigned_Count": 87,
+          "Avg_Monthly_Income_USD": 5272.0,
+          "Attrition_Rate_Percent": 15.51
+        },
+        {
+          "Tenure_Group": "6 - 10 năm (Kinh nghiệm)",
+          "Total_Employees": 448,
+          "Resigned_Count": 55,
+          "Avg_Monthly_Income_USD": 6567.0,
+          "Attrition_Rate_Percent": 12.28
+        },
+        {
+          "Tenure_Group": "Trên 10 năm (Thâm niên cao)",
+          "Total_Employees": 246,
+          "Resigned_Count": 20,
+          "Avg_Monthly_Income_USD": 10887.0,
+          "Attrition_Rate_Percent": 8.13
+        }
+      ]
+    },
+    "query_6": {
+      "title": "6. PHÂN TÍCH MỨC ĐỘ HÀI LÒNG MÔI TRƯỜNG LÀM VIỆC",
+      "sql": "SELECT \n        CASE EnvironmentSatisfaction\n            WHEN 1 THEN '1 - Không hài lòng (Low)'\n            WHEN 2 THEN '2 - Trung bình (Medium)'\n            WHEN 3 THEN '3 - Hài lòng (High)'\n            WHEN 4 THEN '4 - Rất hài lòng (Very High)'\n        END AS Env_Satisfaction_Level,\n        COUNT(*) AS Total_Employees,\n        SUM(Attrition_Label) AS Resigned_Count,\n        ROUND(AVG(Attrition_Label) * 100, 2) AS Attrition_Rate_Percent\n    FROM hr_employee_data\n    GROUP BY EnvironmentSatisfaction\n    ORDER BY EnvironmentSatisfaction ASC",
+      "execution_ms": 0.0,
+      "data": [
+        {
+          "Env_Satisfaction_Level": "1 - Không hài lòng (Low)",
+          "Total_Employees": 284,
+          "Resigned_Count": 72,
+          "Attrition_Rate_Percent": 25.35
+        },
+        {
+          "Env_Satisfaction_Level": "2 - Trung bình (Medium)",
+          "Total_Employees": 287,
+          "Resigned_Count": 43,
+          "Attrition_Rate_Percent": 14.98
+        },
+        {
+          "Env_Satisfaction_Level": "3 - Hài lòng (High)",
+          "Total_Employees": 453,
+          "Resigned_Count": 62,
+          "Attrition_Rate_Percent": 13.69
+        },
+        {
+          "Env_Satisfaction_Level": "4 - Rất hài lòng (Very High)",
+          "Total_Employees": 446,
+          "Resigned_Count": 60,
+          "Attrition_Rate_Percent": 13.45
+        }
+      ]
+    }
+  }
+}

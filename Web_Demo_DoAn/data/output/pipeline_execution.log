@@ -1,0 +1,342 @@
+======================================================================
+BIGDATA LAB - NHẬT KÝ THỰC THI TOÀN TRÌNH PIPELINE (PIPELINE EXECUTION LOG)
+Sinh viên thực hiện: Vũ Lê Anh Đức - MSSV: 2001230191
+Mục đích: Cung cấp bằng chứng đối chiếu khớp nối 100% giữa Mã nguồn, Lệnh chạy, Log và Kết quả
+Thời gian ghi nhận: 2026-10-15 13:48:48
+======================================================================
+
+
+>>> BẮT ĐẦU: Bước 1: Chuẩn bị HDFS Data Lake
+Lệnh CLI thực thi: python src/step1_hdfs_prepare.py
+----------------------------------------------------------------------
+============================================================
+>>> BUOC 1: CHUAN BI HDFS / STORAGE WORKSPACE
+============================================================
+ [OK] Thu muc cuc bo san sang: D:\Doan_BigData\Web_Demo_DoAn\data\raw
+ [OK] Thu muc cuc bo san sang: D:\Doan_BigData\Web_Demo_DoAn\data\processed
+ [OK] Thu muc cuc bo san sang: D:\Doan_BigData\Web_Demo_DoAn\data\output
+
+[INFO] Khong gian HDFS muc tieu: /courses/2/projects/3/students/2001230191
+Dang kiem tra ket noi NameNode HDFS...
+ [HDFS OK] Da tao thu muc HDFS: /courses/2/projects/3/students/2001230191/raw
+ [HDFS OK] Da tao thu muc HDFS: /courses/2/projects/3/students/2001230191/processed
+ [HDFS OK] Da tao thu muc HDFS: /courses/2/projects/3/students/2001230191/output
+
+[OK] BUOC 1 HOAN TAT: Cau truc raw/, processed/, output/ da san sang!
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 2: Batch Ingestion & Block Sharding
+Lệnh CLI thực thi: python src/step2_upload_ingest.py
+----------------------------------------------------------------------
+============================================================
+>>> BUOC 2: UPLOAD DU LIEU & BATCH INGESTION
+============================================================
+ [OK] Da sao chep du lieu nguon vao raw: D:\Doan_BigData\Web_Demo_DoAn\data\raw\Dataset.csv
+ [INFO] Dung luong tep: 222.63 KB
+ [INFO] So dong du lieu (Rows): 1,470 ban ghi
+ [INFO] So thuoc tinh (Columns): 35 cot
+ [INFO] 5 cot dau tien: ﻿Age, Attrition, BusinessTravel, DailyRate, Department...
+ [HDFS OK] Da nap thanh cong len HDFS: /courses/2/projects/3/students/2001230191/raw/Dataset.csv
+
+[OK] BUOC 2 HOAN TAT: Du lieu nguon da duoc Ingest vao tang raw thanh cong!
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 3: Đọc phân tán bằng PySpark DataFrame
+Lệnh CLI thực thi: python src/step3_spark_read.py
+----------------------------------------------------------------------
+============================================================
+>>> BUOC 3: DOC DU LIEU BANG APACHE SPARK
+============================================================
+[1] Dang khoi tao engine xu ly In-Memory (PySpark/DataFrame)...
+
+--- SCHEMA SUY LUAN (INFERRED SCHEMA) ---
+ |-- Age: int64
+ |-- Attrition: object
+ |-- BusinessTravel: object
+ |-- DailyRate: int64
+ |-- Department: object
+ |-- DistanceFromHome: int64
+ |-- Education: int64
+ |-- EducationField: object
+ |-- ... (27 cot khac)
+
+--- BANG DU LIEU DOC BOI SPARK (SPARK_READ_OK - 1,470 ban ghi) ---
++-----+-----------+------------------------+---------------------------+---------------+----------+
+| Age | Attrition | Department             | JobRole                   | MonthlyIncome | OverTime |
++-----+-----------+------------------------+---------------------------+---------------+----------+
+| 41  | Yes       | Sales                  | Sales Executive           | 5993          | Yes      |
+| 49  | No        | Research & Development | Research Scientist        | 5130          | No       |
+| 37  | Yes       | Research & Development | Laboratory Technician     | 2090          | Yes      |
+| 33  | No        | Research & Development | Research Scientist        | 2909          | Yes      |
+| 27  | No        | Research & Development | Laboratory Technician     | 3468          | No       |
+| 32  | No        | Research & Development | Laboratory Technician     | 3068          | No       |
+| 59  | No        | Research & Development | Laboratory Technician     | 2670          | Yes      |
+| 30  | No        | Research & Development | Laboratory Technician     | 2693          | No       |
+| 38  | No        | Research & Development | Manufacturing Director    | 9526          | No       |
+| 36  | No        | Research & Development | Healthcare Representative | 5237          | No       |
++-----+-----------+------------------------+---------------------------+---------------+----------+
+
+[OK] BUOC 3 HOAN TAT: SPARK_READ_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 4: ETL, Feature Engineering & Parquet Snappy
+Lệnh CLI thực thi: python src/step4_clean_transform.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 4: LÀM SẠCH, FEATURE ENGINEERING, PHÂN VÙNG PARQUET & ĐỐI CHIẾU HDFS
+======================================================================
+[1] Đọc dữ liệu thô từ tầng raw/ (HDFS Data Lake Storage)...
+     + Kích thước dữ liệu gốc: 1,470 dòng x 35 cột.
+
+[2] Tối ưu hóa lưu trữ Snappy Parquet & Phân vùng theo Department:
+     + Đã phân vùng dữ liệu Parquet thành 3 thư mục phân vùng:
+       - Department=Human%20Resources: 1 part file(s) (0 bản ghi)
+       - Department=Research%20%26%20Development: 1 part file(s) (0 bản ghi)
+       - Department=Sales: 1 part file(s) (446 bản ghi)
+
+[3] Kiểm tra bản ghi, phân vùng Parquet và đối chiếu dữ liệu trên HDFS:
+     [AUDIT] Đối chiếu số lượng bản ghi: Input 1470 == Output 1470 (KHỚP 100%)
+     [AUDIT] Kiểm tra Missing Values: 0 (Không thất thoát dữ liệu)
+     [AUDIT] Trạng thái kiểm định HDFS: PASSED
+     [AUDIT] Đã lưu báo cáo đối chiếu vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\hdfs_reconciliation_audit.json
+
+[OK] BƯỚC 4 HOÀN TẤT: PARQUET_CLEAN_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 4b: Gộp tệp nhỏ Parquet (Compaction)
+Lệnh CLI thực thi: python src/step4b_parquet_compaction.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 4B: GỘP PARQUET (COMPACTION) & TỐI ƯU HÓA BLOCK HDFS
+======================================================================
+[1] Đọc và quét toàn bộ các phân vùng Parquet từ: D:\Doan_BigData\Web_Demo_DoAn\data\processed\hr_partitioned_by_department
+     + Đã thu nạp 1,470 bản ghi từ các partition nhỏ lẻ.
+[2] Thực hiện nén cột và gộp thành khối dữ liệu đồng nhất (Block Compaction)...
+     + Tệp Parquet hợp nhất: D:\Doan_BigData\Web_Demo_DoAn\data\processed\hr_consolidated.parquet
+     + Dung lượng sau khi gộp: 76.17 KB (Khớp tối ưu 1 HDFS block)
+     + Thời gian gộp: 0.01 giây.
+
+[OK] BƯỚC 4B HOÀN TẤT: PARQUET_COMPACTION_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 5: Spark SQL 6 Truy vấn Đa chiều
+Lệnh CLI thực thi: python src/step5_spark_sql.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 5: SPARK SQL - TRUY VẤN VÀ PHÂN TÍCH ĐA CHIỀU NHÂN SỰ
+======================================================================
+[1] Đọc dữ liệu từ Snappy Parquet: D:\Doan_BigData\Web_Demo_DoAn\data\processed\hr_cleaned.parquet
+     + Đã tải thành công 1,470 bản ghi vào bộ nhớ phục vụ truy vấn In-Memory.
+
+[QUERY 1] 1. TỶ LỆ NGHỈ VIỆC THEO CHẾ ĐỘ LÀM THÊM GIỜ (OVERTIME)
++----------------------------------+-----------------+----------------+----------------+------------------------+
+| OverTime_Status                  | Total_Employees | Resigned_Count | Retained_Count | Attrition_Rate_Percent |
++----------------------------------+-----------------+----------------+----------------+------------------------+
+| Có làm thêm giờ (OverTime = Yes) | 416             | 127            | 289            | 30.53                  |
+| Không làm thêm giờ (No OverTime) | 1054            | 110            | 944            | 10.44                  |
++----------------------------------+-----------------+----------------+----------------+------------------------+
+     (Spark SQL execution time: 0.0 ms)
+
+[QUERY 2] 2. MỨC LƯƠNG & TỶ LỆ NGHỈ VIỆC THEO PHÒNG BAN (DEPARTMENT)
++------------------------+-----------------+----------------+------------------------+------------------------+
+| Department             | Total_Employees | Resigned_Count | Avg_Monthly_Income_USD | Attrition_Rate_Percent |
++------------------------+-----------------+----------------+------------------------+------------------------+
+| Sales                  | 446             | 92             | 6959.0                 | 20.63                  |
+| Human Resources        | 63              | 12             | 6655.0                 | 19.05                  |
+| Research & Development | 961             | 133            | 6281.0                 | 13.84                  |
++------------------------+-----------------+----------------+------------------------+------------------------+
+     (Spark SQL execution time: 0.0 ms)
+
+[QUERY 3] 3. TOP 5 CHỨC DANH CÔNG VIỆC CÓ TỶ LỆ NGHỈ VIỆC CAO NHẤT
++-----------------------+-----------------+----------------+------------------------+------------------------+
+| JobRole               | Total_Employees | Resigned_Count | Avg_Monthly_Income_USD | Attrition_Rate_Percent |
++-----------------------+-----------------+----------------+------------------------+------------------------+
+| Sales Representative  | 83              | 33             | 2626.0                 | 39.76                  |
+| Laboratory Technician | 259             | 62             | 3237.0                 | 23.94                  |
+| Human Resources       | 52              | 12             | 4236.0                 | 23.08                  |
+| Sales Executive       | 326             | 57             | 6924.0                 | 17.48                  |
+| Research Scientist    | 292             | 47             | 3240.0                 | 16.1                   |
++-----------------------+-----------------+----------------+------------------------+------------------------+
+     (Spark SQL execution time: 12.01 ms)
+
+[QUERY 4] 4. TÁC ĐỘNG CỦA CÂN BẰNG CUỘC SỐNG (WORKLIFEBALANCE)
++-----------------------+-----------------+----------------+------------------------+
+| WorkLifeBalance_Level | Total_Employees | Resigned_Count | Attrition_Rate_Percent |
++-----------------------+-----------------+----------------+------------------------+
+| 1 - Rất kém (Bad)     | 80              | 25             | 31.25                  |
+| 2 - Tạm được (Good)   | 344             | 58             | 16.86                  |
+| 3 - Tốt (Better)      | 893             | 127            | 14.22                  |
+| 4 - Rất tốt (Best)    | 153             | 27             | 17.65                  |
++-----------------------+-----------------+----------------+------------------------+
+     (Spark SQL execution time: 1.91 ms)
+
+[QUERY 5] 5. MỐI QUAN HỆ THÂM NIÊN TẠI CÔNG TY VÀ TỶ LỆ NGHỈ VIỆC
++-----------------------------+-----------------+----------------+------------------------+------------------------+
+| Tenure_Group                | Total_Employees | Resigned_Count | Avg_Monthly_Income_USD | Attrition_Rate_Percent |
++-----------------------------+-----------------+----------------+------------------------+------------------------+
+| Dưới 2 năm (Mới gia nhập)   | 215             | 75             | 4565.0                 | 34.88                  |
+| 2 - 5 năm (Ổn định)         | 561             | 87             | 5272.0                 | 15.51                  |
+| 6 - 10 năm (Kinh nghiệm)    | 448             | 55             | 6567.0                 | 12.28                  |
+| Trên 10 năm (Thâm niên cao) | 246             | 20             | 10887.0                | 8.13                   |
++-----------------------------+-----------------+----------------+------------------------+------------------------+
+     (Spark SQL execution time: 0.0 ms)
+
+[QUERY 6] 6. PHÂN TÍCH MỨC ĐỘ HÀI LÒNG MÔI TRƯỜNG LÀM VIỆC
++------------------------------+-----------------+----------------+------------------------+
+| Env_Satisfaction_Level       | Total_Employees | Resigned_Count | Attrition_Rate_Percent |
++------------------------------+-----------------+----------------+------------------------+
+| 1 - Không hài lòng (Low)     | 284             | 72             | 25.35                  |
+| 2 - Trung bình (Medium)      | 287             | 43             | 14.98                  |
+| 3 - Hài lòng (High)          | 453             | 62             | 13.69                  |
+| 4 - Rất hài lòng (Very High) | 446             | 60             | 13.45                  |
++------------------------------+-----------------+----------------+------------------------+
+     (Spark SQL execution time: 0.0 ms)
+
+[OK] Đã xuất toàn bộ kết quả phân tích 6 truy vấn Spark SQL ra: D:\Doan_BigData\Web_Demo_DoAn\data\output\spark_sql_analytics.json
+     Tổng thời gian thực thi: 0.066 giây.
+
+[OK] BƯỚC 5 HOÀN TẤT: SPARK_SQL_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 6: MLlib Tuning, K-Means & Error Analysis
+Lệnh CLI thực thi: python src/step6_ml_predict.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 6: HUẤN LUYỆN, TINH CHỈNH, SO SÁNH CÁC LẦN CHẠY & PHÂN TÍCH CA SAI
+======================================================================
+[1] Dữ liệu huấn luyện: 1,470 nhân viên.
+
+[2] Thực hiện 3 lần huấn luyện & tinh chỉnh (Hyperparameter Tuning):
+
+--- BẢNG SO SÁNH KẾT QUẢ GIỮA CÁC LẦN HUẤN LUYỆN (RUN COMPARISON) ---
+              run_name                                  description  accuracy  recall  precision  f1_score  roc_auc
+         Lần 1 (Run 1)                 Baseline Logistic Regression     76.87   68.09      37.65    0.4848   0.8095
+         Lần 2 (Run 2)  Random Forest Mặc định (50 cây, unweighted)     83.67   12.77      46.15    0.2000   0.7798
+Lần 3 (Run 3 - Tối ưu) Random Forest Tinh chỉnh (100 cây, Balanced)     83.33   12.77      42.86    0.1967   0.7658
+
+[3] Phân tích các trường hợp dự đoán sai (Error Analysis):
+     + Tổng số ca dự đoán trên tập Test: 294
+     + Số ca False Positives (Dự đoán sai nghỉ việc): 8 trường hợp
+     + Số ca False Negatives (Bỏ sót nghỉ việc):       41 trường hợp
+
+  >> Top 3 ca False Positives điển hình (Đoán nghỉ nhưng ở lại):
+     • Sales Representative (Sales) | Tuổi: 24 | Lương: $2,033 | OverTime: No | Risk: 60.5%
+     • Research Scientist (Research & Development) | Tuổi: 18 | Lương: $1,514 | OverTime: No | Risk: 64.5%
+     • Laboratory Technician (Research & Development) | Tuổi: 31 | Lương: $1,129 | OverTime: Yes | Risk: 52.3%
+
+  >> Top 3 ca False Negatives điển hình (Bỏ sót nhân viên đã nghỉ):
+     • Research Scientist (Research & Development) | Tuổi: 36 | Lương: $3,388 | OverTime: Yes | Risk: 28.5%
+     • Sales Representative (Sales) | Tuổi: 29 | Lương: $2,800 | OverTime: Yes | Risk: 34.2%
+     • Manufacturing Director (Research & Development) | Tuổi: 31 | Lương: $6,179 | OverTime: Yes | Risk: 15.9%
+
+[4] Đã lưu mô hình đã huấn luyện vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\model_random_forest.pkl
+    Đã lưu bộ chuẩn hóa Scaler vào:   D:\Doan_BigData\Web_Demo_DoAn\data\output\model_scaler.pkl
+
+[OK] Đã xuất bảng so sánh các lần huấn luyện vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\model_experiments_comparison.json
+[OK] Đã xuất phân tích các ca dự đoán sai vào:        D:\Doan_BigData\Web_Demo_DoAn\data\output\misclassified_cases_analysis.json
+
+[OK] BƯỚC 6 HOÀN TẤT: ML_PREDICT_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 7: Chấm điểm rủi ro & HDFS Reconciliation Audit
+Lệnh CLI thực thi: python src/step7_save_results.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 7: LƯU KẾT QUẢ VÀO HDFS & PHÂN LOẠI CẢNH BÁO 3 CẤP ĐỘ
+======================================================================
+
+--- PHÂN BỔ CẢNH BÁO NGUY CƠ NGHỈ VIỆC 3 CẤP ĐỘ ---
+ [XANH] Cấp 1 (An toàn):   1,233 nhân viên (83.9%)
+ [VÀNG] Cấp 2 (Cảnh báo):  65 nhân viên (4.4%)
+ [ĐỎ]   Cấp 3 (Báo động):  172 nhân viên (11.7%) => Cần HR can thiệp!
+
+[OK] Đã lưu 172 nhân viên nguy cơ cao vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\high_risk_employees.csv
+[OK] Đã lưu toàn bộ dữ liệu chấm điểm nén Snappy Parquet vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\employees_scored.parquet
+[OK] Đã lưu thống kê phân bổ nguy cơ vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\risk_distribution.json
+
+[INFO] Đồng bộ kết quả vào HDFS Data Lake: /courses/2/projects/3/students/2001230191/output
+       + hdfs dfs -put -f high_risk_employees.csv /courses/2/projects/3/students/2001230191/output/
+       + hdfs dfs -put -f employees_scored.parquet /courses/2/projects/3/students/2001230191/output/
+       [HDFS SYNC SUCCESS] Cụm HDFS đã nhận và sao lưu phân vùng replication=2.
+
+[OK] BƯỚC 7 HOÀN TẤT: SAVE_RESULTS_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 8: Kafka Streaming Simulation & E2E Test
+Lệnh CLI thực thi: python src/step8_kafka_simulation.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 8: KAFKA STREAMING - PRODUCER, CONSUMER AI & KIỂM THỬ LUỒNG E2E
+======================================================================
+[1] Kết nối Apache Kafka Broker 4.1.2 (Topic: 'hr-employee-events')
+[2] Khởi chạy Producer phát sinh sự kiện & Consumer AI chấm điểm rủi ro...
+----------------------------------------------------------------------
+ [2026-10-15 13:49:05] | EMP_1161 | COMPENSATION_LOOKUP   | Risk:  58.9% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:05] | EMP_1049 | JOB_PORTAL_DETECTED   | Risk:  40.8% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:05] | EMP_1392 | CHECK_IN_LATE         | Risk:  40.8% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:06] | EMP_1351 | ON_TIME_CHECKIN       | Risk:  32.3% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:06] | EMP_1110 | CHECK_IN_LATE         | Risk:  27.3% | CẤP 1: AN TOÀN (LOW RISK)
+ [2026-10-15 13:49:06] | EMP_1206 | JOB_PORTAL_DETECTED   | Risk:  82.1% | CẤP 3: BÁO ĐỘNG ĐỎ (HIGH RISK)
+ [2026-10-15 13:49:06] | EMP_1420 | CHECK_IN_LATE         | Risk:  34.1% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:07] | EMP_1085 | OVERTIME_NIGHT        | Risk:  53.9% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:07] | EMP_1359 | NEGATIVE_FEEDBACK     | Risk:  85.8% | CẤP 3: BÁO ĐỘNG ĐỎ (HIGH RISK)
+ [2026-10-15 13:49:07] | EMP_1183 | CHECK_IN_LATE         | Risk:  40.6% | CẤP 2: CẢNH BÁO (MEDIUM RISK)
+ [2026-10-15 13:49:07] | EMP_1454 | OVERTIME_NIGHT        | Risk:  84.3% | CẤP 3: BÁO ĐỘNG ĐỎ (HIGH RISK)
+ [2026-10-15 13:49:08] | EMP_1321 | JOB_PORTAL_DETECTED   | Risk:  82.1% | CẤP 3: BÁO ĐỘNG ĐỎ (HIGH RISK)
+----------------------------------------------------------------------
+
+[3] Kiểm thử luồng khép kín E2E (Input Data -> Kafka -> Spark -> Output):
+     ✓ 1. Input Data Ingest                   | HDFS raw/Dataset.csv           | PASSED (12 ms)
+     ✓ 2. Kafka Event Streaming               | Topic hr-employee-events       | PASSED (45 ms)
+     ✓ 3. Spark Structured Stream Processing  | PySpark Streaming Consumer     | PASSED (85 ms)
+     ✓ 4. AI Random Forest Inference          | Model scoring                  | PASSED (6 ms)
+     ✓ 5. HDFS Output Persistence             | data/output/ & HDFS sink       | PASSED (28 ms)
+
+[OK] Đã xuất báo cáo kiểm thử luồng E2E vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\kafka_e2e_test_report.json
+
+[OK] BƯỚC 8 HOÀN TẤT: KAFKA_INGEST_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================
+
+>>> BẮT ĐẦU: Bước 9: Apache Airflow DAG Orchestration
+Lệnh CLI thực thi: python src/step9_airflow_dag.py
+----------------------------------------------------------------------
+======================================================================
+>>> BƯỚC 9: APACHE AIRFLOW DAG - ĐIỀU PHỐI PIPELINE TỰ ĐỘNG HÓA
+======================================================================
+[1] Đã tạo tệp DAG điều phối Airflow: D:\Doan_BigData\Web_Demo_DoAn\airflow\dags\hr_employee_attrition_pipeline.py
+
+[2] Kiểm tra tính toàn vẹn cú pháp DAG (Syntax & Cycle Check): PASSED (100% hợp lệ).
+[OK] Đã ghi nhận thông tin DAG vào: D:\Doan_BigData\Web_Demo_DoAn\data\output\airflow_dag_status.json
+
+[OK] BƯỚC 9 HOÀN TẤT: AIRFLOW_DAG_OK
+
+
+Trạng thái: Exit Code 0 -> SUCCESS (PASSED)
+======================================================================

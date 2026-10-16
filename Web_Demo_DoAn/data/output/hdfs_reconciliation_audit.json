@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-10-15 13:48:55",
+  "audit_status": "PASSED",
+  "input_csv_records": 1470,
+  "processed_parquet_records": 1470,
+  "read_back_records": 1470,
+  "records_difference": 0,
+  "missing_values_count": 0,
+  "partitions_count": 3,
+  "partitions_list": [
+    "Department=Human%20Resources",
+    "Department=Research%20%26%20Development",
+    "Department=Sales"
+  ],
+  "storage_comparison": {
+    "raw_csv_kb": 222.63,
+    "snappy_parquet_kb": 76.37,
+    "space_saved_percent": 65.7
+  },
+  "hdfs_workspace_target": "/courses/2/projects/3/students/2001230191/processed/"
+}

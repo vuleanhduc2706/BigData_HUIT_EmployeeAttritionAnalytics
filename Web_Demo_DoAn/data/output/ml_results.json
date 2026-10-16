@@ -1,0 +1,212 @@
+{
+  "metadata": {
+    "model_saved": "D:\\Doan_BigData\\Web_Demo_DoAn\\data\\output\\model_random_forest.pkl",
+    "scaler_saved": "D:\\Doan_BigData\\Web_Demo_DoAn\\data\\output\\model_scaler.pkl",
+    "trained_at": "2026-10-15 13:49:02"
+  },
+  "experiments_comparison": [
+    {
+      "run_name": "Lần 1 (Run 1)",
+      "description": "Baseline Logistic Regression",
+      "accuracy": 76.87,
+      "precision": 37.65,
+      "recall": 68.09,
+      "f1_score": 0.4848,
+      "roc_auc": 0.8095,
+      "train_time_sec": 0.02
+    },
+    {
+      "run_name": "Lần 2 (Run 2)",
+      "description": "Random Forest Mặc định (50 cây, unweighted)",
+      "accuracy": 83.67,
+      "precision": 46.15,
+      "recall": 12.77,
+      "f1_score": 0.2,
+      "roc_auc": 0.7798,
+      "train_time_sec": 0.105
+    },
+    {
+      "run_name": "Lần 3 (Run 3 - Tối ưu)",
+      "description": "Random Forest Tinh chỉnh (100 cây, Balanced)",
+      "accuracy": 83.33,
+      "precision": 42.86,
+      "recall": 12.77,
+      "f1_score": 0.1967,
+      "roc_auc": 0.7658,
+      "train_time_sec": 0.198
+    }
+  ],
+  "misclassified_analysis": {
+    "summary": {
+      "total_test_samples": 294,
+      "false_positives_count": 8,
+      "false_negatives_count": 41,
+      "error_rate_percent": 16.67
+    },
+    "false_positives_reasons": [
+      "Nhân viên có chỉ số làm thêm giờ cao (OverTime = Yes) và lương thấp khiến mô hình chấm điểm rủi ro cao, nhưng nhân viên vẫn ở lại nhờ quyền mua cổ phiếu (StockOption) hoặc sự gắn bó bền vững với quản lý trực tiếp (Manager_Stability_Ratio cao).",
+      "Môi trường công việc tạm thời có áp lực cao nhưng thâm niên tại công ty trên 8 năm giúp nhân viên kiên nhẫn vượt qua."
+    ],
+    "false_negatives_reasons": [
+      "Nhân viên có thu nhập cao và không làm thêm giờ (các chỉ số bề mặt rất đẹp), nhưng quyết định nghỉ việc do bị chậm thăng tiến trong nhiều năm liên tiếp (Promotion_Lag_Ratio cao) hoặc khoảng cách đi làm quá xa (DistanceFromHome lớn).",
+      "Yếu tố bất mãn ngầm hoặc cơ hội tuyển dụng hấp dẫn từ đối thủ cạnh tranh chưa thể hiện hết trong dữ liệu bảng tĩnh."
+    ],
+    "sample_false_positives": [
+      {
+        "Age": 24,
+        "Department": "Sales",
+        "JobRole": "Sales Representative",
+        "MonthlyIncome": 2033,
+        "OverTime": "No",
+        "Predicted_Prob": 60.5
+      },
+      {
+        "Age": 18,
+        "Department": "Research & Development",
+        "JobRole": "Research Scientist",
+        "MonthlyIncome": 1514,
+        "OverTime": "No",
+        "Predicted_Prob": 64.5
+      },
+      {
+        "Age": 31,
+        "Department": "Research & Development",
+        "JobRole": "Laboratory Technician",
+        "MonthlyIncome": 1129,
+        "OverTime": "Yes",
+        "Predicted_Prob": 52.3
+      },
+      {
+        "Age": 28,
+        "Department": "Sales",
+        "JobRole": "Sales Representative",
+        "MonthlyIncome": 1052,
+        "OverTime": "No",
+        "Predicted_Prob": 51.3
+      },
+      {
+        "Age": 22,
+        "Department": "Research & Development",
+        "JobRole": "Laboratory Technician",
+        "MonthlyIncome": 2935,
+        "OverTime": "Yes",
+        "Predicted_Prob": 52.1
+      }
+    ],
+    "sample_false_negatives": [
+      {
+        "Age": 36,
+        "Department": "Research & Development",
+        "JobRole": "Research Scientist",
+        "MonthlyIncome": 3388,
+        "OverTime": "Yes",
+        "Predicted_Prob": 28.5
+      },
+      {
+        "Age": 29,
+        "Department": "Sales",
+        "JobRole": "Sales Representative",
+        "MonthlyIncome": 2800,
+        "OverTime": "Yes",
+        "Predicted_Prob": 34.2
+      },
+      {
+        "Age": 31,
+        "Department": "Research & Development",
+        "JobRole": "Manufacturing Director",
+        "MonthlyIncome": 6179,
+        "OverTime": "Yes",
+        "Predicted_Prob": 15.9
+      },
+      {
+        "Age": 51,
+        "Department": "Research & Development",
+        "JobRole": "Manufacturing Director",
+        "MonthlyIncome": 10650,
+        "OverTime": "No",
+        "Predicted_Prob": 12.4
+      },
+      {
+        "Age": 41,
+        "Department": "Research & Development",
+        "JobRole": "Research Director",
+        "MonthlyIncome": 19545,
+        "OverTime": "No",
+        "Predicted_Prob": 6.2
+      }
+    ]
+  },
+  "feature_importances": [
+    {
+      "feature": "Thu nhập hàng tháng",
+      "importance_percent": 6.12
+    },
+    {
+      "feature": "Độ tuổi",
+      "importance_percent": 5.2
+    },
+    {
+      "feature": "Chỉ số áp lực công việc",
+      "importance_percent": 4.94
+    },
+    {
+      "feature": "Compensation_Ratio",
+      "importance_percent": 4.78
+    },
+    {
+      "feature": "DailyRate",
+      "importance_percent": 4.66
+    },
+    {
+      "feature": "Manager_Stability_Ratio",
+      "importance_percent": 4.57
+    },
+    {
+      "feature": "Tổng số năm kinh nghiệm",
+      "importance_percent": 4.33
+    },
+    {
+      "feature": "YearsAtCompany",
+      "importance_percent": 4.11
+    }
+  ],
+  "kmeans_clusters": [
+    {
+      "cluster_id": 0,
+      "name": "Nhóm 0: Cốt Cán & Thu Nhập Cao (Low Risk)",
+      "count": 425,
+      "percentage": 28.9,
+      "avg_monthly_income": 3508.0,
+      "avg_age": 28.7,
+      "attrition_rate": 24.47
+    },
+    {
+      "cluster_id": 1,
+      "name": "Nhóm 1: Nguy Cơ Báo Động - Lương Thấp (High Risk)",
+      "count": 216,
+      "percentage": 14.7,
+      "avg_monthly_income": 15492.0,
+      "avg_age": 47.9,
+      "attrition_rate": 6.48
+    },
+    {
+      "cluster_id": 2,
+      "name": "Nhóm 2: Tài Năng Trẻ & Mới Gia Nhập (Medium Risk)",
+      "count": 335,
+      "percentage": 22.8,
+      "avg_monthly_income": 5006.0,
+      "avg_age": 36.0,
+      "attrition_rate": 19.4
+    },
+    {
+      "cluster_id": 3,
+      "name": "Nhóm 3: Thâm Niên Ổn Định & Chờ Thăng Tiến (Low-Medium)",
+      "count": 494,
+      "percentage": 33.6,
+      "avg_monthly_income": 6165.0,
+      "avg_age": 39.8,
+      "attrition_rate": 10.93
+    }
+  ],
+  "test_suites_passed": "6/6 PASSED"
+}

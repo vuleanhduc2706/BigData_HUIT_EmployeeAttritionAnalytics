@@ -1,0 +1,100 @@
+{
+  "summary": {
+    "total_test_samples": 294,
+    "false_positives_count": 8,
+    "false_negatives_count": 41,
+    "error_rate_percent": 16.67
+  },
+  "false_positives_reasons": [
+    "Nhân viên có chỉ số làm thêm giờ cao (OverTime = Yes) và lương thấp khiến mô hình chấm điểm rủi ro cao, nhưng nhân viên vẫn ở lại nhờ quyền mua cổ phiếu (StockOption) hoặc sự gắn bó bền vững với quản lý trực tiếp (Manager_Stability_Ratio cao).",
+    "Môi trường công việc tạm thời có áp lực cao nhưng thâm niên tại công ty trên 8 năm giúp nhân viên kiên nhẫn vượt qua."
+  ],
+  "false_negatives_reasons": [
+    "Nhân viên có thu nhập cao và không làm thêm giờ (các chỉ số bề mặt rất đẹp), nhưng quyết định nghỉ việc do bị chậm thăng tiến trong nhiều năm liên tiếp (Promotion_Lag_Ratio cao) hoặc khoảng cách đi làm quá xa (DistanceFromHome lớn).",
+    "Yếu tố bất mãn ngầm hoặc cơ hội tuyển dụng hấp dẫn từ đối thủ cạnh tranh chưa thể hiện hết trong dữ liệu bảng tĩnh."
+  ],
+  "sample_false_positives": [
+    {
+      "Age": 24,
+      "Department": "Sales",
+      "JobRole": "Sales Representative",
+      "MonthlyIncome": 2033,
+      "OverTime": "No",
+      "Predicted_Prob": 60.5
+    },
+    {
+      "Age": 18,
+      "Department": "Research & Development",
+      "JobRole": "Research Scientist",
+      "MonthlyIncome": 1514,
+      "OverTime": "No",
+      "Predicted_Prob": 64.5
+    },
+    {
+      "Age": 31,
+      "Department": "Research & Development",
+      "JobRole": "Laboratory Technician",
+      "MonthlyIncome": 1129,
+      "OverTime": "Yes",
+      "Predicted_Prob": 52.3
+    },
+    {
+      "Age": 28,
+      "Department": "Sales",
+      "JobRole": "Sales Representative",
+      "MonthlyIncome": 1052,
+      "OverTime": "No",
+      "Predicted_Prob": 51.3
+    },
+    {
+      "Age": 22,
+      "Department": "Research & Development",
+      "JobRole": "Laboratory Technician",
+      "MonthlyIncome": 2935,
+      "OverTime": "Yes",
+      "Predicted_Prob": 52.1
+    }
+  ],
+  "sample_false_negatives": [
+    {
+      "Age": 36,
+      "Department": "Research & Development",
+      "JobRole": "Research Scientist",
+      "MonthlyIncome": 3388,
+      "OverTime": "Yes",
+      "Predicted_Prob": 28.5
+    },
+    {
+      "Age": 29,
+      "Department": "Sales",
+      "JobRole": "Sales Representative",
+      "MonthlyIncome": 2800,
+      "OverTime": "Yes",
+      "Predicted_Prob": 34.2
+    },
+    {
+      "Age": 31,
+      "Department": "Research & Development",
+      "JobRole": "Manufacturing Director",
+      "MonthlyIncome": 6179,
+      "OverTime": "Yes",
+      "Predicted_Prob": 15.9
+    },
+    {
+      "Age": 51,
+      "Department": "Research & Development",
+      "JobRole": "Manufacturing Director",
+      "MonthlyIncome": 10650,
+      "OverTime": "No",
+      "Predicted_Prob": 12.4
+    },
+    {
+      "Age": 41,
+      "Department": "Research & Development",
+      "JobRole": "Research Director",
+      "MonthlyIncome": 19545,
+      "OverTime": "No",
+      "Predicted_Prob": 6.2
+    }
+  ]
+}

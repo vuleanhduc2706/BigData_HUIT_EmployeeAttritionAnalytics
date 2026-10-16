@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-10-15 13:48:56",
+  "status": "COMPACTED_SUCCESS",
+  "total_records": 1470,
+  "consolidated_file": "D:\\Doan_BigData\\Web_Demo_DoAn\\data\\processed\\hr_consolidated.parquet",
+  "size_kb": 76.17,
+  "execution_sec": 0.01
+}

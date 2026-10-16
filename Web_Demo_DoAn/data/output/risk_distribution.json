@@ -1,0 +1,21 @@
+{
+  "total_employees": 1470,
+  "low_risk_safe": {
+    "count": 1233,
+    "percentage": 83.9,
+    "label": "An toàn (<30%)",
+    "color": "#10b981"
+  },
+  "medium_risk_warning": {
+    "count": 65,
+    "percentage": 4.4,
+    "label": "Cảnh báo (30-70%)",
+    "color": "#f59e0b"
+  },
+  "high_risk_danger": {
+    "count": 172,
+    "percentage": 11.7,
+    "label": "Báo động cao (>70%)",
+    "color": "#ef4444"
+  }
+}

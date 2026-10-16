@@ -1,0 +1,65 @@
+{
+  "dag_id": "hr_employee_attrition_pipeline",
+  "description": "Pipeline tu dong hoa du doan nguy co nghi viec nhan vien",
+  "schedule": "@daily",
+  "owner": "VuLeAnhDuc_2001230191",
+  "total_tasks": 9,
+  "status": "active",
+  "last_run": "2026-10-15 13:49:08",
+  "tasks": [
+    {
+      "id": "1_hdfs_prepare",
+      "name": "1. Chuẩn bị HDFS",
+      "status": "success",
+      "duration_sec": 1.2
+    },
+    {
+      "id": "2_upload_ingest",
+      "name": "2. Ingest Dữ liệu thô",
+      "status": "success",
+      "duration_sec": 1.5
+    },
+    {
+      "id": "3_spark_read",
+      "name": "3. Đọc dữ liệu PySpark",
+      "status": "success",
+      "duration_sec": 2.1
+    },
+    {
+      "id": "4_clean_parquet_snappy",
+      "name": "4. Feature Engineering & Parquet",
+      "status": "success",
+      "duration_sec": 2.8
+    },
+    {
+      "id": "4b_compact_parquet_files",
+      "name": "4b. Gộp Parquet (Compaction)",
+      "status": "success",
+      "duration_sec": 0.9
+    },
+    {
+      "id": "5_spark_sql_analytics",
+      "name": "5. Spark SQL 6 Truy vấn",
+      "status": "success",
+      "duration_sec": 3.4
+    },
+    {
+      "id": "6_ml_tune_and_train",
+      "name": "6. ML Tinh chỉnh & Phân tích sai",
+      "status": "success",
+      "duration_sec": 4.6
+    },
+    {
+      "id": "7_save_results_hdfs",
+      "name": "7. Xuất HDFS & Cảnh báo 3 cấp",
+      "status": "success",
+      "duration_sec": 1.8
+    },
+    {
+      "id": "8_kafka_streaming_health",
+      "name": "8. Kafka Streaming & E2E Test",
+      "status": "success",
+      "duration_sec": 2.5
+    }
+  ]
+}

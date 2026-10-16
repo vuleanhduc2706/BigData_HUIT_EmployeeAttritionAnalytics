@@ -1,0 +1,27 @@
+[
+  {
+    "Chi_So": "Accuracy",
+    "Logistic_Regression": "76.87%",
+    "Random_Forest": "83.67%"
+  },
+  {
+    "Chi_So": "Recall (Bat nghi viec)",
+    "Logistic_Regression": "63.83%",
+    "Random_Forest": "6.38%"
+  },
+  {
+    "Chi_So": "Precision (Chinh xac)",
+    "Logistic_Regression": "37.04%",
+    "Random_Forest": "42.86%"
+  },
+  {
+    "Chi_So": "F1-Score",
+    "Logistic_Regression": "0.4688",
+    "Random_Forest": "0.1111"
+  },
+  {
+    "Chi_So": "ROC-AUC",
+    "Logistic_Regression": "0.8052",
+    "Random_Forest": "0.7357"
+  }
+]

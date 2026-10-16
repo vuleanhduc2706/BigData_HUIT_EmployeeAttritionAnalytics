@@ -1,0 +1,32 @@
+[
+  {
+    "run_name": "Lần 1 (Run 1)",
+    "description": "Baseline Logistic Regression",
+    "accuracy": 76.87,
+    "precision": 37.65,
+    "recall": 68.09,
+    "f1_score": 0.4848,
+    "roc_auc": 0.8095,
+    "train_time_sec": 0.02
+  },
+  {
+    "run_name": "Lần 2 (Run 2)",
+    "description": "Random Forest Mặc định (50 cây, unweighted)",
+    "accuracy": 83.67,
+    "precision": 46.15,
+    "recall": 12.77,
+    "f1_score": 0.2,
+    "roc_auc": 0.7798,
+    "train_time_sec": 0.105
+  },
+  {
+    "run_name": "Lần 3 (Run 3 - Tối ưu)",
+    "description": "Random Forest Tinh chỉnh (100 cây, Balanced)",
+    "accuracy": 83.33,
+    "precision": 42.86,
+    "recall": 12.77,
+    "f1_score": 0.1967,
+    "roc_auc": 0.7658,
+    "train_time_sec": 0.198
+  }
+]
