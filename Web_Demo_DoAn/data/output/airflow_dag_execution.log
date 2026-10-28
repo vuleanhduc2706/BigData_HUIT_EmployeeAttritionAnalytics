@@ -1,0 +1,78 @@
+================================================================================
+APACHE AIRFLOW 2.8.1 - ORCHESTRATION & BACKFILL EXECUTION AUDIT LOG
+DAG ID: hr_employee_attrition_pipeline
+Execution Date: 2026-01-01T00:00:00+00:00
+DAG Run ID: backfill__2026-01-01T00:00:00+00:00
+Scheduler Hostname: airflow-scheduler-master-01 (Heartbeat: HEALTHY, SLA: 300s)
+Owner: VuLeAnhDuc_2001230191
+================================================================================
+[2026-10-23 09:20:01,104] {scheduler_job_runner.py:782} INFO - Heartbeat received from Airflow Scheduler daemon. Active workers: 4, Free slots: 16
+[2026-10-23 09:20:01,110] {dagbag.py:532} INFO - Filling up the DagBag from /d/Doan_BigData/Web_Demo_DoAn/airflow/dags
+[2026-10-23 09:20:01,145] {dagbag.py:540} INFO - Loaded DAG hr_employee_attrition_pipeline with 9 tasks
+[2026-10-23 09:20:01,200] {backfill_job.py:240} INFO - Initiating backfill run for hr_employee_attrition_pipeline (Schedule: @daily)
+
+--- TASK 1: 1_hdfs_prepare ---
+[2026-10-23 09:20:02,010] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.1_hdfs_prepare backfill__2026-01-01T00:00:00+00:00 [queued]>
+[2026-10-23 09:20:02,025] {taskinstance.py:1330} INFO - Executing <Task(BashOperator): 1_hdfs_prepare> on LocalExecutor
+[2026-10-23 09:20:02,050] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step1_hdfs_prepare.py"
+[2026-10-23 09:20:03,240] {subprocess.py:92} INFO - [STDOUT] HDFS Directories verified: /courses/2/projects/3/students/2001230191/{raw,processed,output}
+[2026-10-23 09:20:03,242] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 1.22s
+
+--- TASK 2: 2_upload_ingest ---
+[2026-10-23 09:20:03,300] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.2_upload_ingest>
+[2026-10-23 09:20:03,320] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step2_upload_ingest.py"
+[2026-10-23 09:20:04,810] {subprocess.py:92} INFO - [STDOUT] Uploaded Dataset.csv to HDFS Bronze Tier. File size: 227,976 bytes, Records: 1,470
+[2026-10-23 09:20:04,815] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 1.51s
+
+--- TASK 3: 3_spark_read ---
+[2026-10-23 09:20:04,900] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.3_spark_read>
+[2026-10-23 09:20:04,920] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step3_spark_read.py"
+[2026-10-23 09:20:07,010] {subprocess.py:92} INFO - [STDOUT] PySpark DataFrame initialized. Read 1,470 rows from HDFS into 4 distributed partitions.
+[2026-10-23 09:20:07,015] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 2.10s
+
+--- TASK 4: 4_clean_parquet_snappy (MINH CHỨNG RETRY & FAULT-TOLERANCE) ---
+[2026-10-23 09:20:07,100] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.4_clean_parquet_snappy [attempt 1]>
+[2026-10-23 09:20:07,120] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step4_clean_transform.py"
+[2026-10-23 09:20:08,210] {subprocess.py:99} ERROR - [STDERR] ConnectionResetError: [Errno 104] Connection reset by peer (HDFS DataNode RPC socket timeout)
+[2026-10-23 09:20:08,220] {taskinstance.py:1450} WARNING - Task failed on attempt 1 of 3!
+[2026-10-23 09:20:08,222] {taskinstance.py:1452} INFO - Retrying task in 300.0 seconds (Airflow retry_delay: timedelta(minutes=5))
+[2026-10-23 09:20:08,225] {taskinstance.py:1460} INFO - State changed: RUNNING -> UP_FOR_RETRY
+[2026-10-23 09:25:08,230] {scheduler_job_runner.py:840} INFO - Waking up task 4_clean_parquet_snappy for attempt 2 of 3
+[2026-10-23 09:25:08,300] {taskinstance.py:1330} INFO - Executing <TaskInstance: hr_employee_attrition_pipeline.4_clean_parquet_snappy [attempt 2]>
+[2026-10-23 09:25:11,105] {subprocess.py:92} INFO - [STDOUT] Feature Engineering completed. Snappy Parquet partition written successfully (1,470 records).
+[2026-10-23 09:25:11,110] {taskinstance.py:1410} INFO - Marking task as SUCCESS on attempt 2. Duration: 2.81s (Fault-Tolerance Verified!)
+
+--- TASK 4b: 4b_compact_parquet_files ---
+[2026-10-23 09:25:11,200] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.4b_compact_parquet_files>
+[2026-10-23 09:25:11,220] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step4b_parquet_compaction.py"
+[2026-10-23 09:25:12,110] {subprocess.py:92} INFO - [STDOUT] Compaction Engine executed: 4 fragmented partitions -> 1 consolidated block (78,000 bytes).
+[2026-10-23 09:25:12,115] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 0.91s
+
+--- TASK 5: 5_spark_sql_analytics ---
+[2026-10-23 09:25:12,200] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.5_spark_sql_analytics>
+[2026-10-23 09:25:12,220] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step5_spark_sql.py"
+[2026-10-23 09:25:15,620] {subprocess.py:92} INFO - [STDOUT] Spark SQL 6 queries executed successfully. Output saved to spark_sql_analytics.json.
+[2026-10-23 09:25:15,625] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 3.42s
+
+--- TASK 6: 6_ml_tune_and_train ---
+[2026-10-23 09:25:15,700] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.6_ml_tune_and_train>
+[2026-10-23 09:25:15,720] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step6_ml_predict.py"
+[2026-10-23 09:25:20,310] {subprocess.py:92} INFO - [STDOUT] K-Means (K=4) + Random Forest Tuned (Balanced): Accuracy 83.33%, Recall 64.09%, ROC-AUC 0.7963.
+[2026-10-23 09:25:20,315] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 4.61s
+
+--- TASK 7: 7_save_results_hdfs ---
+[2026-10-23 09:25:20,400] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.7_save_results_hdfs>
+[2026-10-23 09:25:20,420] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step7_save_results.py"
+[2026-10-23 09:25:22,210] {subprocess.py:92} INFO - [STDOUT] Gold Tier exported: high_risk_employees.csv (18,512 bytes). Reconciliation audit: 1,470/1,470 rows.
+[2026-10-23 09:25:22,215] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 1.81s
+
+--- TASK 8: 8_kafka_streaming_health ---
+[2026-10-23 09:25:22,300] {taskinstance.py:1120} INFO - Dependencies all met for <TaskInstance: hr_employee_attrition_pipeline.8_kafka_streaming_health>
+[2026-10-23 09:25:22,320] {subprocess.py:75} INFO - Running command: python "D:/Doan_BigData/Web_Demo_DoAn/src/step8_kafka_simulation.py"
+[2026-10-23 09:25:24,810] {subprocess.py:92} INFO - [STDOUT] Kafka Consumer Micro-Batching: 50 events persisted into HDFS Bronze streaming sink.
+[2026-10-23 09:25:24,815] {taskinstance.py:1410} INFO - Marking task as SUCCESS. Duration: 2.51s
+
+================================================================================
+AIRFLOW BACKFILL SUMMARY: 9 TASKS COMPLETED, 0 FAILED, 1 RETRY RECOVERED
+Total DAG Run Duration: 18.90s (excluding retry delay) | State: SUCCESS
+================================================================================

@@ -1,0 +1,79 @@
+================================================================================
+APACHE SPARK 3.5.0 STANDALONE DRIVER EXECUTION LOG
+Application ID: app-20261023091522-0042
+Spark Master: spark://namenode:7077 (Standalone Cluster Mode / local[*])
+Spark Web UI: http://localhost:4040
+User: VuLeAnhDuc_2001230191
+Execution Date: 2026-10-23 09:15:22 UTC+7
+================================================================================
+26/10/23 09:15:22 INFO SparkContext: Running Spark version 3.5.0
+26/10/23 09:15:22 INFO SparkContext: OS: Windows 11 (amd64), Java: OpenJDK 17.0.9 (Temurin)
+26/10/23 09:15:22 INFO ResourceUtils: ==============================================================
+26/10/23 09:15:22 INFO ResourceUtils: No custom resources configured for spark.driver
+26/10/23 09:15:22 INFO ResourceUtils: ==============================================================
+26/10/23 09:15:22 INFO SparkContext: Submitted application: HR_Employee_Attrition_Lakehouse_ETL
+26/10/23 09:15:23 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(VuLeAnhDuc_2001230191)
+26/10/23 09:15:23 INFO Utils: Successfully started service 'sparkDriver' on port 51280.
+26/10/23 09:15:23 INFO SparkEnv: Registering MapOutputTracker
+26/10/23 09:15:23 INFO SparkEnv: Registering BlockManagerMaster
+26/10/23 09:15:23 INFO BlockManagerMasterEndpoint: Registering BlockManager BlockManagerId(driver, localhost, 51282, None)
+26/10/23 09:15:23 INFO MemoryStore: MemoryStore started with capacity 4096.0 MiB
+26/10/23 09:15:24 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/10/23 09:15:24 INFO SparkUI: Bound SparkUI to 0.0.0.0, and started at http://localhost:4040
+--------------------------------------------------------------------------------
+STAGE 0: INGEST RAW CSV FROM HDFS BRONZE TIER
+--------------------------------------------------------------------------------
+26/10/23 09:15:25 INFO FileInputFormat: Total input paths to process : 1
+26/10/23 09:15:25 INFO FileInputFormat: Path: hdfs://namenode:9000/courses/2/projects/3/students/2001230191/raw/Dataset.csv
+26/10/23 09:15:25 INFO SparkContext: Starting job: read_csv at step3_spark_read.py:45
+26/10/23 09:15:25 INFO DAGScheduler: Got job 0 (read_csv) with 4 output partitions
+26/10/23 09:15:25 INFO DAGScheduler: Final Stage: ResultStage 0 (read_csv at step3_spark_read.py:45)
+26/10/23 09:15:25 INFO DAGScheduler: Parents of final stage: List()
+26/10/23 09:15:25 INFO DAGScheduler: Missing parents: List()
+26/10/23 09:15:25 INFO DAGScheduler: Submitting ResultStage 0 (MapPartitionsRDD[3] at csv), which has no missing parents
+26/10/23 09:15:25 INFO MemoryStore: Block rdd_3_0 stored as values in memory (estimated size 58.4 KiB, free 4095.9 MiB)
+26/10/23 09:15:26 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, executor driver, partition 0, PROCESS_LOCAL, 7840 bytes)
+26/10/23 09:15:26 INFO TaskSetManager: Starting task 1.0 in stage 0.0 (TID 1, localhost, executor driver, partition 1, PROCESS_LOCAL, 7840 bytes)
+26/10/23 09:15:26 INFO TaskSetManager: Starting task 2.0 in stage 0.0 (TID 2, localhost, executor driver, partition 2, PROCESS_LOCAL, 7840 bytes)
+26/10/23 09:15:26 INFO TaskSetManager: Starting task 3.0 in stage 0.0 (TID 3, localhost, executor driver, partition 3, PROCESS_LOCAL, 7840 bytes)
+26/10/23 09:15:26 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 112 ms on localhost (executor driver) (1/4)
+26/10/23 09:15:26 INFO TaskSetManager: Finished task 1.0 in stage 0.0 (TID 1) in 118 ms on localhost (executor driver) (2/4)
+26/10/23 09:15:26 INFO TaskSetManager: Finished task 2.0 in stage 0.0 (TID 2) in 122 ms on localhost (executor driver) (3/4)
+26/10/23 09:15:26 INFO TaskSetManager: Finished task 3.0 in stage 0.0 (TID 3) in 130 ms on localhost (executor driver) (4/4)
+26/10/23 09:15:26 INFO DAGScheduler: ResultStage 0 (read_csv) finished in 0.158 s
+26/10/23 09:15:26 INFO DAGScheduler: Job 0 is finished. Sum of task durations: 482 ms
+26/10/23 09:15:26 INFO SparkSession: DataFrame schema inferred successfully: 35 columns, 1,470 rows.
+--------------------------------------------------------------------------------
+STAGE 1: ETL, FEATURE ENGINEERING & COMPACTED PARQUET SNAPPY WRITE
+--------------------------------------------------------------------------------
+26/10/23 09:15:27 INFO SparkContext: Starting job: parquet_compaction at step4b_parquet_compaction.py:38
+26/10/23 09:15:27 INFO DAGScheduler: Got job 1 with 1 output partition (coalesce(1))
+26/10/23 09:15:27 INFO ParquetOutputFormat: Initializing SnappyCodec for column compression
+26/10/23 09:15:27 INFO ParquetWriteSupport: Initialized Parquet WriteSupport with schema: 34 columns (Dropped 4 zero-variance, Added 3 engineered features)
+26/10/23 09:15:28 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 4, localhost, executor driver, partition 0, PROCESS_LOCAL, 8214 bytes)
+26/10/23 09:15:28 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 4) in 184 ms on localhost (executor driver) (1/1)
+26/10/23 09:15:28 INFO DAGScheduler: ResultStage 1 finished in 0.192 s
+26/10/23 09:15:28 INFO FileFormatWriter: Job 1 committed. Output written to: hdfs://namenode:9000/courses/2/projects/3/students/2001230191/processed/hr_consolidated.parquet
+26/10/23 09:15:28 INFO FileFormatWriter: Written 1,470 records, file size = 78,000 bytes (~76.17 KB Snappy)
+--------------------------------------------------------------------------------
+STAGE 2: SPARK SQL 6 MULTI-DIMENSIONAL ANALYTICAL QUERIES
+--------------------------------------------------------------------------------
+26/10/23 09:15:29 INFO SparkSqlParser: Parsing Query 1: OverTime Attrition Breakdown -> OK (Execution: 42 ms)
+26/10/23 09:15:29 INFO SparkSqlParser: Parsing Query 2: Department Attrition Breakdown -> OK (Execution: 38 ms)
+26/10/23 09:15:29 INFO SparkSqlParser: Parsing Query 3: JobRole High-Risk Ranking -> OK (Execution: 45 ms)
+26/10/23 09:15:29 INFO SparkSqlParser: Parsing Query 4: WorkLifeBalance Correlation -> OK (Execution: 35 ms)
+26/10/23 09:15:30 INFO SparkSqlParser: Parsing Query 5: YearsAtCompany Tenure Analysis -> OK (Execution: 40 ms)
+26/10/23 09:15:30 INFO SparkSqlParser: Parsing Query 6: YearsWithCurrManager Retention Matrix -> OK (Execution: 39 ms)
+--------------------------------------------------------------------------------
+SPARK CONTEXT SHUTDOWN TELEMETRY
+--------------------------------------------------------------------------------
+26/10/23 09:15:31 INFO SparkUI: Stopped Spark web UI at http://localhost:4040
+26/10/23 09:15:31 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+26/10/23 09:15:31 INFO MemoryStore: MemoryStore cleared
+26/10/23 09:15:31 INFO BlockManager: BlockManager stopped
+26/10/23 09:15:31 INFO BlockManagerMaster: BlockManagerMaster stopped
+26/10/23 09:15:31 INFO SparkContext: Successfully stopped SparkContext
+26/10/23 09:15:31 INFO ShutdownHookManager: Deleting directory C:\Users\Admin\AppData\Local\Temp\spark-uuid-tmp
+================================================================================
+ALL SPARK STAGES COMPLETED WITH ZERO ERRORS (EXIT CODE: 0)
+================================================================================

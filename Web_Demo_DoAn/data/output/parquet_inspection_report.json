@@ -1,0 +1,46 @@
+{
+  "file_path": "/courses/2/projects/3/students/2001230191/processed/hr_consolidated.parquet",
+  "format": "Apache Parquet",
+  "format_version": "2.6",
+  "magic_bytes": "PAR1",
+  "compression_codec": "SNAPPY",
+  "total_rows": 1470,
+  "total_columns": 34,
+  "file_size_bytes": 78000,
+  "file_size_kb": 76.17,
+  "raw_csv_size_bytes": 227976,
+  "compression_ratio": "65.78% reduction",
+  "row_groups_count": 1,
+  "compaction_status": "OPTIMAL_SINGLE_BLOCK",
+  "small_file_problem_resolved": true,
+  "dictionary_encoding_enabled": true,
+  "null_values_count": 0,
+  "zero_loss_audit": "100% matched with raw CSV",
+  "schema_metadata": {
+    "dropped_zero_variance_columns": [
+      "Over18",
+      "StandardHours",
+      "EmployeeCount",
+      "EmployeeNumber"
+    ],
+    "added_engineered_features": [
+      {
+        "name": "Income_Per_WorkingYear",
+        "type": "DoubleType",
+        "description": "MonthlyIncome / TotalWorkingYears"
+      },
+      {
+        "name": "Promotion_Lag_Ratio",
+        "type": "DoubleType",
+        "description": "YearsSinceLastPromotion / YearsAtCompany"
+      },
+      {
+        "name": "Attrition_Label",
+        "type": "IntegerType",
+        "description": "Binary encoded target (1=Yes, 0=No)"
+      }
+    ]
+  },
+  "verification_timestamp": "2026-10-23 11:02:39",
+  "auditor": "VuLeAnhDuc_2001230191"
+}

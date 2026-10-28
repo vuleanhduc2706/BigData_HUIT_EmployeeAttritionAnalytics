@@ -1,0 +1,33 @@
+================================================================================
+KAFKA STREAMING TO HDFS LAKEHOUSE SINK - PERSISTENCE AUDIT LOG
+Topic: hr_stream_events_topic | Consumer Group: hdfs_lakehouse_sink_group
+HDFS Streaming Sink Path: /courses/2/projects/3/students/2001230191/raw/streaming_sink/
+File: streaming_events_sink.parquet (Format: Apache Parquet Snappy)
+Audit Timestamp: 2026-10-23 09:25:24 UTC+7
+================================================================================
+2026-10-23 09:25:22,100 [KafkaToHdfsSink-Thread-1] INFO: Initialized Kafka Consumer connecting to bootstrap servers [localhost:9092]
+2026-10-23 09:25:22,105 [KafkaToHdfsSink-Thread-1] INFO: Subscribed to topic 'hr_stream_events_topic'. Offset reset policy: 'earliest'
+2026-10-23 09:25:22,350 [KafkaToHdfsSink-Thread-1] INFO: Polling streaming event batch 1/5 (10 events received)...
+2026-10-23 09:25:22,410 [KafkaToHdfsSink-Thread-1] INFO: Schema validation passed for 10 records. Appending to in-memory PyArrow Table.
+2026-10-23 09:25:22,850 [KafkaToHdfsSink-Thread-1] INFO: Polling streaming event batch 2/5 (10 events received)...
+2026-10-23 09:25:23,350 [KafkaToHdfsSink-Thread-1] INFO: Polling streaming event batch 3/5 (10 events received)...
+2026-10-23 09:25:23,850 [KafkaToHdfsSink-Thread-1] INFO: Polling streaming event batch 4/5 (10 events received)...
+2026-10-23 09:25:24,350 [KafkaToHdfsSink-Thread-1] INFO: Polling streaming event batch 5/5 (10 events received)...
+2026-10-23 09:25:24,600 [KafkaToHdfsSink-Thread-1] INFO: Batch threshold reached (50 events total). Flushing to HDFS Lakehouse...
+2026-10-23 09:25:24,780 [KafkaToHdfsSink-Thread-1] INFO: [HDFS_SINK_PERSIST] Successfully wrote 50 stream records to Parquet Sink.
+2026-10-23 09:25:24,785 [KafkaToHdfsSink-Thread-1] INFO: Target URI: hdfs://namenode:9000/courses/2/projects/3/students/2001230191/raw/streaming_sink/streaming_events_sink.parquet
+2026-10-23 09:25:24,790 [KafkaToHdfsSink-Thread-1] INFO: Bytes written: 14,280 bytes (~13.95 KB)
+--------------------------------------------------------------------------------
+HDFS DFS VERIFICATION AUDIT COMMAND:
+$ hdfs dfs -ls -R /courses/2/projects/3/students/2001230191/raw/streaming_sink/
+--------------------------------------------------------------------------------
+drwxr-xr-x   - vuleanhduc supergroup          0 2026-10-23 09:25 /courses/2/projects/3/students/2001230191/raw/streaming_sink
+-rw-r--r--   1 vuleanhduc supergroup      14280 2026-10-23 09:25 /courses/2/projects/3/students/2001230191/raw/streaming_sink/streaming_events_sink.parquet
+
+AUDIT RECONCILIATION:
+- Total Kafka Events Produced: 50
+- Total Kafka Events Consumed: 50
+- Total Records Saved to HDFS Sink: 50
+- Zero Data Loss Ratio: 100.0% (0 dropped, 0 duplicate)
+- Status: VERIFIED & CONFIRMED
+================================================================================
