@@ -690,21 +690,119 @@ class KafkaToHdfsSink:
     add_figure("tab6_airflow.png", "Hình 6.1: Sơ đồ chuỗi điều phối 9 bước Apache Airflow DAG và số liệu Benchmark lưu trữ HDFS")
 
     # =========================================================================
-    # MỤC 7: GIAO DIỆN WEB DASHBOARD DEMO (ĐẦY ĐỦ 6 TABS)
+    # MỤC 7: GIAO DIỆN WEB DASHBOARD PHỤC VỤ NGHIỆP VỤ (MINH CHỨNG ĐẦY ĐỦ 6 TABS)
     # =========================================================================
     add_section_h1("7. GIAO DIỆN WEB DASHBOARD PHỤC VỤ NGHIỆP VỤ (MINH CHỨNG ĐẦY ĐỦ 6 TABS)")
     p7 = doc.add_paragraph()
     p7.add_run(
-        "Web Client Dashboard hoạt động tại địa chỉ http://localhost:5000, kết nối 100% đầu ra từ pipeline Big Data thông qua các REST API động. "
-        "Dưới đây là hình ảnh minh chứng chi tiết của từng Tab chức năng trong hệ thống:"
+        "7.1. Kiến trúc Tầng Phục vụ Web (Full-Stack Serving Architecture):\n"
+        "Nhằm chuyển giao toàn bộ kết quả phân tích từ hệ sinh thái Big Data tới người dùng nghiệp vụ phòng Nhân sự (HR Manager) và Ban Giám đốc, "
+        "hệ thống xây dựng ứng dụng Web Client tương tác cao cấp trên nền Flask Framework (Port 5000), kết hợp Bootstrap 5, FontAwesome và Chart.js 4.4. "
+        "Toàn bộ 6 Tab chức năng không dùng dữ liệu cứng (hardcoded) mà nạp động qua các REST API kết nối trực tiếp đến các tệp kết quả của Pipeline Big Data:\n\n"
+        "• REST API /api/pipeline/run: Điều khiển thực thi từng bước hoặc toàn chuỗi 9 bước, stream stdout trực tiếp về Terminal Web.\n"
+        "• REST API /api/spark-sql/overview: Đọc data/output/spark_sql_analytics.json hiển thị 6 biểu đồ phân tích đa chiều.\n"
+        "• REST API /api/ml/metrics: Đọc data/output/model_experiments_comparison.json & kmeans_summary.json vẽ biểu đồ mạng nhện.\n"
+        "• REST API /api/kafka/events: Lắng nghe dòng sự kiện thời gian thực từ Kafka Topic và cập nhật bảng cảnh báo 3 cấp độ.\n"
+        "• REST API /api/predict: Nạp model_random_forest.pkl & model_scaler.pkl vào RAM, thực thi suy luận tức thì với độ trễ 11.13 ms.\n"
+        "• REST API /api/storage/benchmark: Đọc storage_benchmark.json & airflow_dag_status.json hiển thị KPI tối ưu hóa lưu trữ."
     )
 
-    add_figure("tab1_pipeline.png", "Hình 7.1: Tab 1 - Bảng điều khiển Pipeline 9 bước và Terminal tương tác trực tiếp", width_in=6.2)
-    add_figure("tab2_spark_sql.png", "Hình 7.2: Tab 2 - Spark SQL Analytics với 6 biểu đồ phân tích đa chiều nhân sự trực quan", width_in=6.2)
-    add_figure("tab3_kmeans.png", "Hình 7.3: Tab 3 - K-Means & Machine Learning Metrics với biểu đồ mạng nhện 4 cụm nhân sự", width_in=6.2)
-    add_figure("tab4_kafka.png", "Hình 7.4: Tab 4 - Kafka Live Streaming Ticker và bảng cảnh báo rủi ro chấm công 3 cấp độ", width_in=6.2)
-    add_figure("tab5_simulator.png", "Hình 7.5: Tab 5 - AI Risk Simulator dự đoán tức thì từ model .pkl và xuất khuyến nghị giữ chân", width_in=6.2)
-    add_figure("tab6_airflow.png", "Hình 7.6: Tab 6 - Apache Airflow DAG Orchestration & HDFS Health Benchmark", width_in=6.2)
+    code_app_serving = """# Trích đoạn mã nguồn: app.py - Chứng minh Backend Flask kết nối động 100% đầu ra Pipeline
+from flask import Flask, render_template, jsonify, request
+import json, pickle, os, subprocess, pandas as pd
+
+app = Flask(__name__)
+OUTPUT_DIR = "data/output"
+
+# 1. API Cung cấp dữ liệu Spark SQL 6 chiều
+@app.route("/api/spark-sql/overview")
+def api_spark_sql():
+    with open(os.path.join(OUTPUT_DIR, "spark_sql_analytics.json"), "r", encoding="utf-8") as f:
+        return jsonify(json.load(f))
+
+# 2. API Cung cấp số liệu K-Means & Machine Learning Metrics
+@app.route("/api/ml/metrics")
+def api_ml_metrics():
+    with open(os.path.join(OUTPUT_DIR, "model_experiments_comparison.json"), "r", encoding="utf-8") as f:
+        comp = json.load(f)
+    with open(os.path.join(OUTPUT_DIR, "kmeans_summary.json"), "r", encoding="utf-8") as f:
+        kmeans = json.load(f)
+    return jsonify({"comparison": comp, "kmeans": kmeans})
+
+# 3. API Suy luận thời gian thực từ Model .pkl phục vụ Tab 5 Simulator
+@app.route("/api/predict", methods=["POST"])
+def api_predict():
+    data = request.json
+    model = pickle.load(open(os.path.join(OUTPUT_DIR, "model_random_forest.pkl"), "rb"))
+    scaler = pickle.load(open(os.path.join(OUTPUT_DIR, "model_scaler.pkl"), "rb"))
+    # Xử lý vector đặc trưng, scale và dự đoán xác suất
+    prob = model.predict_proba(scaler.transform([[...]]))[0][1]
+    risk_level = "CẤP 3: ĐỎ" if prob >= 0.7 else ("CẤP 2: VÀNG" if prob >= 0.3 else "CẤP 1: XANH")
+    return jsonify({"attrition_probability": round(prob * 100, 2), "risk_level": risk_level})"""
+    add_code_block("app.py (Flask Web Dashboard Serving Routes)", code_app_serving)
+
+    # 7.2. MINH CHỨNG CHI TIẾT 6 TAB GIAO DIỆN
+    add_section_h2("7.2. Đặc tả Giao diện & Hình ảnh Minh chứng Thực tế của 6 Tab Chức năng:")
+    
+    # TAB 1
+    p_t1 = doc.add_paragraph()
+    p_t1.add_run(
+        "• TAB 1: BẢNG ĐIỀU KHIỂN PIPELINE 9 BƯỚC & TERMINAL TƯƠNG TÁC (Pipeline Orchestration):\n"
+        "Cung cấp giao diện trực quan cho phép người dùng điều khiển thực thi độc lập từng bước từ Bước 1 (HDFS Prepare) đến Bước 9 (Airflow DAG) "
+        "hoặc bấm nút 'Chạy Toàn Trình'. Terminal giả lập tương tác nhúng ngay trên trang Web hiển thị trực tiếp dòng lệnh CLI, thông số đầu ra "
+        "và badge trạng thái xanh lá 'SUCCESS (Exit Code 0)' chứng minh hệ thống đang vận hành hoàn hảo:"
+    )
+    add_figure("tab1_pipeline.png", "Hình 7.1: Tab 1 - Bảng điều khiển Pipeline 9 bước và Terminal tương tác trực tiếp (http://localhost:5000/#tab1)", width_in=6.2)
+
+    # TAB 2
+    p_t2 = doc.add_paragraph()
+    p_t2.add_run(
+        "• TAB 2: SPARK SQL MULTI-DIMENSIONAL ANALYTICS (Phân tích Đa chiều Nhân sự):\n"
+        "Trực quan hóa sinh động 6 câu truy vấn Spark SQL qua 6 khối biểu đồ tương tác Chart.js: Biểu đồ cột OverTime (30.5% vs 10.4%), "
+        "Biểu đồ tròn tỷ lệ nghỉ việc theo 3 phòng ban (Sales 20.6%, HR 19.1%, R&D 13.8%), Biểu đồ thanh xếp hạng 9 chức danh công việc "
+        "(Sales Rep 39.8%), Biểu đồ radar Cân bằng cuộc sống, Biểu đồ đường Thâm niên (khủng hoảng 2 năm đầu 34.9%), và Ma trận tương quan Quản lý trực tiếp:"
+    )
+    add_figure("tab2_spark_sql.png", "Hình 7.2: Tab 2 - Spark SQL Analytics với 6 biểu đồ phân tích đa chiều nhân sự trực quan (http://localhost:5000/#tab2)", width_in=6.2)
+
+    # TAB 3
+    p_t3 = doc.add_paragraph()
+    p_t3.add_run(
+        "• TAB 3: MACHINE LEARNING, K-MEANS CLUSTERING & FEATURE IMPORTANCE:\n"
+        "Trực quan hóa kết quả phân cụm K-Means 4 nhóm nhân sự qua biểu đồ mạng nhện đa giác, bảng so sánh đối chuẩn 3 lần huấn luyện mô hình "
+        "(Logistic Regression vs Random Forest Default vs Tuned Balanced), đồ thị ROC Curve (AUC = 0.7963), Ma trận nhầm lẫn (Confusion Matrix) "
+        "và Biểu đồ xếp hạng mức độ quan trọng đặc trưng (Top Feature Importances: MonthlyIncome 7.52%, Age 6.81%, OverTime 4.95%):"
+    )
+    add_figure("tab3_kmeans.png", "Hình 7.3: Tab 3 - K-Means & Machine Learning Metrics với biểu đồ mạng nhện 4 cụm nhân sự (http://localhost:5000/#tab3)", width_in=6.2)
+
+    # TAB 4
+    p_t4 = doc.add_paragraph()
+    p_t4.add_run(
+        "• TAB 4: KAFKA LIVE STREAMING TICKER & BẢNG CẢNH BÁO RỦI RO 3 CẤP ĐỘ:\n"
+        "Mô phỏng dòng sự kiện nhịp đập nhân sự phát sinh liên tục qua Kafka Broker (100 - 250ms/event). Consumer tự động chấm điểm rủi ro "
+        "và phân loại tức thì vào 3 cấp độ cảnh báo: Cấp 1 (Xanh - An toàn <30%), Cấp 2 (Vàng - Cần lưu ý 30-70%), và Cấp 3 (Đỏ - Báo động khẩn >=70%). "
+        "Bảng dữ liệu trôi động thời gian thực kèm huy hiệu màu sắc giúp HR kịp thời nắm bắt nhân sự có dấu hiệu bất thường:"
+    )
+    add_figure("tab4_kafka.png", "Hình 7.4: Tab 4 - Kafka Live Streaming Ticker và bảng cảnh báo rủi ro chấm công 3 cấp độ (http://localhost:5000/#tab4)", width_in=6.2)
+
+    # TAB 5
+    p_t5 = doc.add_paragraph()
+    p_t5.add_run(
+        "• TAB 5: AI REAL-TIME EMPLOYEE ATTRITION SIMULATOR (Bộ Mô phỏng Dự đoán Thời gian thực):\n"
+        "Cho phép chuyên viên HR nhập liệu hoặc kéo thanh trượt điều chỉnh các chỉ số của một nhân sự (Tuổi, Chức danh, Mức lương, Chế độ làm thêm giờ, "
+        "Khoảng cách đi làm, Thâm niên, Thời gian chưa thăng tiến). Khi bấm nút 'Dự Đoán Nguy Cơ', Web gửi POST request đến /api/predict nạp model .pkl "
+        "tính toán tức thì trong 11.13 ms, hiển thị đồng hồ đo xác suất (Gauge Chart) và tự động xuất Khuyến nghị Giữ chân cá nhân hóa (Retention Plan):"
+    )
+    add_figure("tab5_simulator.png", "Hình 7.5: Tab 5 - AI Risk Simulator dự đoán tức thì từ model .pkl và xuất khuyến nghị giữ chân (http://localhost:5000/#tab5)", width_in=6.2)
+
+    # TAB 6
+    p_t6 = doc.add_paragraph()
+    p_t6.add_run(
+        "• TAB 6: APACHE AIRFLOW DAG ORCHESTRATION & HDFS HEALTH BENCHMARK:\n"
+        "Hiển thị sơ đồ đồ thị có hướng 9 Tasks của Airflow DAG (hr_employee_attrition_pipeline), trạng thái hoạt động của Scheduler và Worker, "
+        "bảng đối chiếu đối soát bản ghi HDFS (Zero-Loss 1,470 bản ghi) và Biểu đồ Benchmark dung lượng lưu trữ chứng minh hiệu quả giảm 65.78% dung lượng đĩa "
+        "khi chuyển từ CSV sang Parquet Snappy Compacted:"
+    )
+    add_figure("tab6_airflow.png", "Hình 7.6: Tab 6 - Apache Airflow DAG Orchestration & HDFS Health Benchmark (http://localhost:5000/#tab6)", width_in=6.2)
 
     # =========================================================================
     # MỤC 8: NHẬT KÝ THỰC HIỆN VÀ KHẮC PHỤC LỖI KỸ THUẬT
